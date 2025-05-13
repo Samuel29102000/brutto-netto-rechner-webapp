@@ -4,11 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brutto-Netto-Rechner</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  
+  <!-- Icons (optional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Brutto-Netto-Rechner (Deutschland)</h1>
+    <h1><i class="fas fa-calculator"></i> Brutto-Netto-Rechner</h1>
 
     <form id="gehaltsFormular">
       <label for="brutto">Bruttogehalt (€):</label>
@@ -24,12 +32,12 @@
         <option value="6">VI</option>
       </select>
 
-      <label for="kirche">
+      <label class="checkbox-label" for="kirche">
         <input type="checkbox" id="kirche" name="kirchensteuer" />
         Kirchensteuer
       </label>
 
-      <button type="submit">Berechnen</button>
+      <button type="submit"><i class="fas fa-equals"></i> Berechnen</button>
     </form>
 
     <div id="ausgabe"></div>
