@@ -1,23 +1,24 @@
-<script>
+// main.js
 document.getElementById("gehaltsFormular").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const button = this.querySelector("button");
-  button.disabled = true;
-  button.textContent = "Berechne...";
+  const btn = document.getElementById("berechnenBtn");
+  const bruttoInput = document.getElementById("bruttoInput");
+  const ergebnisDiv = document.getElementById("ergebnis");
 
-  const brutto = parseFloat(document.getElementById("brutto").value);
+  ergebnisDiv.innerHTML = "";
+  btn.disabled = true;
+  btn.textContent = "Berechne...";
+
+  const brutto = parseFloat(bruttoInput.value);
   const steuerklasse = parseInt(document.getElementById("steuerklasse").value);
   const kirche = document.getElementById("kirche").checked;
 
-  const ausgabe = document.getElementById("ausgabe");
-  ausgabe.innerHTML = ""; // Vorherige Ausgabe leeren
-
-  // Eingaben validieren
-  if (isNaN(brutto) || brutto <= 0 || isNaN(steuerklasse) || steuerklasse < 1 || steuerklasse > 6) {
-    ausgabe.innerHTML = `<p style="color:red;">❗ Bitte gültige Werte eingeben (Brutto > 0, Steuerklasse 1–6).</p>`;
-    button.disabled = false;
-    button.textContent = "Berechnen";
+  if (isNaN(brutto) || brutto <= 0 || steuerklasse < 1 || steuerklasse > 6) {
+    ergebnisDiv.innerHTML = `<p style="color:red;">❗ Bitte gib ein gültiges Bruttogehalt (> 0) und eine Steuerklasse (1–6) ein.</p>`;
+    btn.disabled = false;
+    btn.textContent = "Berechnen";
+    bruttoInput.focus();
     return;
   }
 
@@ -25,33 +26,25 @@ document.getElementById("gehaltsFormular").addEventListener("submit", async func
     const response = await fetch("https://backend-2-0-lyhi.onrender.com/api/gehalt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        gehalt: brutto,
-        steuerklasse: steuerklasse,
-        kirchensteuer: kirche
-      })
+      body: JSON.stringify({ gehalt: brutto, steuerklasse, kirchensteuer: kirche })
     });
 
-    if (!response.ok) {
-      throw new Error(`Serverfehler: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`Status ${response.status}`);
     const daten = await response.json();
 
-    ausgabe.innerHTML = `
-      <h2>💰 Netto-Gehalt: <strong>${daten.netto} €</strong></h2>
+    ergebnisDiv.innerHTML = `
+      <h2>💰 Netto-Gehalt: <strong>${daten.netto.toFixed(2)} €</strong></h2>
       <ul>
-        <li>🧾 Lohnsteuer: ${daten.abzuege.lohnsteuer} €</li>
-        <li>🏦 Rentenversicherung: ${daten.abzuege.rentenversicherung} €</li>
-        <li>🏥 Krankenversicherung: ${daten.abzuege.krankenversicherung} €</li>
-        <li>❤️ Pflegeversicherung: ${daten.abzuege.pflegeversicherung} €</li>
+        <li>🧾 Lohnsteuer: ${daten.abzuege.lohnsteuer.toFixed(2)} €</li>
+        <li>🏦 Rentenversicherung: ${daten.abzuege.rentenversicherung.toFixed(2)} €</li>
+        <li>🏥 Krankenversicherung: ${daten.abzuege.krankenversicherung.toFixed(2)} €</li>
+        <li>❤️ Pflegeversicherung: ${daten.abzuege.pflegeversicherung.toFixed(2)} €</li>
       </ul>
     `;
-  } catch (error) {
-    ausgabe.innerHTML = `<p style="color:red;">⚠️ Fehler bei der Berechnung. Bitte später erneut versuchen.<br><small>${error.message}</small></p>`;
+  } catch (err) {
+    ergebnisDiv.innerHTML = `<p style="color:red;">⚠️ Fehler bei der Berechnung: ${err.message}</p>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Berechnen";
   }
-
-  button.disabled = false;
-  button.textContent = "Berechnen";
 });
-</script>
