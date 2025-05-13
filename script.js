@@ -1,33 +1,49 @@
 document.getElementById("berechnenBtn").addEventListener("click", async () => {
-  const brutto = parseFloat(document.getElementById("bruttoInput").value);
+  const bruttoInput = document.getElementById("bruttoInput");
+  const brutto = parseFloat(bruttoInput.value);
+  const ergebnisDiv = document.getElementById("ergebnis");
 
-  if (isNaN(brutto)) {
-    alert("Bitte gib ein gültiges Bruttogehalt ein.");
+  // Vorherige Ausgabe löschen
+  ergebnisDiv.innerHTML = "";
+
+  // Eingabe-Validierung
+  if (isNaN(brutto) || brutto <= 0) {
+    alert("❗ Bitte gib ein gültiges Bruttogehalt (> 0) ein.");
+    bruttoInput.focus();
     return;
   }
 
+  // Button-Feedback
+  const btn = document.getElementById("berechnenBtn");
+  btn.disabled = true;
+  btn.textContent = "Berechne...";
+
   try {
-    // Sende eine POST-Anfrage an dein Backend
-    const response = await fetch("https://brutto-netto-backend.onrender.com", {
-      method: "POST", // POST-Anfrage, da wir Daten senden
-      headers: {
-        "Content-Type": "application/json", // Wir senden JSON
-      },
-      body: JSON.stringify({ brutto }), // Bruttogehalt als JSON im Body der Anfrage
+    const response = await fetch("https://backend-2-0-9xt0.onrender.com/api/gehalt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ brutto })
     });
 
-    // Warte auf die Antwort und verarbeite sie
+    if (!response.ok) {
+      throw new Error(`Server reagierte mit Status ${response.status}`);
+    }
+
     const data = await response.json();
 
-    // Zeige die berechneten Werte an
-    document.getElementById("ergebnis").innerHTML = `
+    // Ausgabe formatieren
+    ergebnisDiv.innerHTML = `
+      <h2>Ergebnis:</h2>
       <p><strong>Netto:</strong> ${data.netto.toFixed(2)} €</p>
-      <p><strong>Steuern:</strong> ${data.steuerbetrag.toFixed(2)} €</p>
+      <p><strong>Steuerbetrag:</strong> ${data.steuerbetrag.toFixed(2)} €</p>
       <p><strong>Sozialversicherungen:</strong> ${data.sozialversicherungen.toFixed(2)} €</p>
     `;
-  } catch (error) {
-    // Fehlerbehandlung, falls etwas schiefgeht
-    alert("Fehler bei der Berechnung.");
-    console.error(error);
+  } catch (err) {
+    console.error(err);
+    ergebnisDiv.innerHTML = `<p style="color:red;">⚠️ Fehler bei der Berechnung: ${err.message}</p>`;
+  } finally {
+    // Button zurücksetzen
+    btn.disabled = false;
+    btn.textContent = "Berechnen";
   }
 });
