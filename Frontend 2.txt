@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brutto-Netto-Rechner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Brutto-Netto-Rechner (Deutschland)</h1>
+    <form id="gehaltsFormular">
+      <label for="brutto">Bruttogehalt (€):
+        <input type="number" id="brutto" required>
+      </label><br>
+
+      <label for="steuerklasse">Steuerklasse:
+        <select id="steuerklasse">
+          <option value="1">I</option>
+          <option value="2">II</option>
+          <option value="3">III</option>
+          <option value="4">IV</option>
+          <option value="5">V</option>
+          <option value="6">VI</option>
+        </select>
+      </label><br>
+
+      <label for="kirche">Kirchensteuer:
+        <input type="checkbox" id="kirche">
+      </label><br>
+
+      <button type="submit">Berechnen</button>
+    </form>
+
+    <div id="ausgabe"></div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
