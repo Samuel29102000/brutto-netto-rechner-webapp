@@ -1,2 +1,2 @@
-# brutto-netto-rechner-webapp
+# Gehaltsrechner_WKPB
 Web-App zur Berechnung des Nettogehalts in Deutschland
