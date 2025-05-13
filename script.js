@@ -25,7 +25,7 @@ document.getElementById("berechnenBtn").addEventListener("click", async () => {
   } catch (error) {
     alert("Fehler bei der Berechnung.");
     console.error(error);
-    fetch("http://localhost:10000/calculate", {
+    fetch("https://dein-backend.onrender.com/calculate", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -37,5 +37,3 @@ document.getElementById("berechnenBtn").addEventListener("click", async () => {
   console.log(data);
 })
 .catch(error => console.error("Fehler:", error));
-  }
-});
