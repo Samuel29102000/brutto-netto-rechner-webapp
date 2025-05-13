@@ -10,7 +10,7 @@ document.getElementById("gehaltsFormular").addEventListener("submit", async func
   const kirche = document.getElementById("kirche").checked;
 
   try {
-    const response = await fetch("https://YOUR-BACKEND-URL/api/berechne", {
+    const response = await fetch("https://backend-2-0-9xt0.onrender.com", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
