@@ -25,7 +25,7 @@ document.getElementById("berechnenBtn").addEventListener("click", async () => {
   } catch (error) {
     alert("Fehler bei der Berechnung.");
     console.error(error);
-    fetch("http://localhost:3000/calculate", {
+    fetch("http://localhost:10000/calculate", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
