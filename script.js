@@ -8,7 +8,7 @@ document.getElementById("berechnenBtn").addEventListener("click", async () => {
 
   try {
     // Sende eine POST-Anfrage an dein Backend
-    const response = await fetch("https://brutto-netto-backend.onrender.com/calculate", {
+    const response = await fetch("https://brutto-netto-backend-1.onrender.com/calculate", {
       method: "POST", // POST-Anfrage, da wir Daten senden
       headers: {
         "Content-Type": "application/json", // Wir senden JSON
