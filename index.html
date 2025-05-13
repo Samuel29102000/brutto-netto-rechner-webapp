@@ -2,49 +2,37 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Brutto-Netto-Rechner</title>
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1><i class="fas fa-calculator"></i> Brutto-Netto-Rechner</h1>
+  <h1>🧮 Brutto-Netto-Rechner</h1>
 
-    <form id="gehaltsFormular">
-      <label for="bruttoInput">Bruttogehalt (€):</label>
-      <input type="number" id="bruttoInput" name="brutto" required />
+  <form id="gehaltsFormular">
+    <label for="bruttoInput">Brutto-Gehalt (monatlich in €):</label>
+    <input type="number" id="bruttoInput" min="1" step="0.01" required />
 
-      <label for="steuerklasse">Steuerklasse:</label>
-      <select id="steuerklasse" name="steuerklasse">
-        <option value="1">I</option>
-        <option value="2">II</option>
-        <option value="3">III</option>
-        <option value="4">IV</option>
-        <option value="5">V</option>
-        <option value="6">VI</option>
-      </select>
+    <label for="steuerklasse">Steuerklasse:</label>
+    <select id="steuerklasse" name="steuerklasse">
+      <option value="I">I</option>
+      <option value="II">II</option>
+      <option value="III">III</option>
+      <option value="IV" selected>IV</option>
+      <option value="V">V</option>
+      <option value="VI">VI</option>
+    </select>
 
-      <label class="checkbox-label" for="kirche">
-        <input type="checkbox" id="kirche" name="kirchensteuer" />
-        Kirchensteuer
-      </label>
+    <label>
+      <input type="checkbox" id="kirche" />
+      Kirchensteuerpflichtig
+    </label>
 
-      <button type="submit" id="berechnenBtn">
-        <i class="fas fa-equals"></i> Berechnen
-      </button>
-    </form>
+    <button type="submit" id="berechnenBtn">Berechnen</button>
+  </form>
 
-    <div id="ergebnis"></div>
-    <canvas id="chartCanvas" style="max-width:100%; height:300px;"></canvas>
-  </div>
+  <div id="ergebnis"></div>
+  <canvas id="chartCanvas" width="400" height="200"></canvas>
 
   <script src="main.js"></script>
 </body>
