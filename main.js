@@ -1,67 +1,61 @@
 // main.js
-document.getElementById("gehaltsFormular").addEventListener("submit", async function (e) {
+document.getElementById("gehaltsFormular").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const btn           = document.getElementById("berechnenBtn");
-  const bruttoInput   = document.getElementById("bruttoInput");
-  const ergebnisDiv   = document.getElementById("ergebnis");
+  const btn         = document.getElementById("berechnenBtn");
+  const bruttoInput = document.getElementById("bruttoInput");
+  const ergebnisDiv = document.getElementById("ergebnis");
 
+  btn.disabled    = true;
+  btn.textContent = "Berechne...";
   ergebnisDiv.innerHTML = "";
-  btn.disabled          = true;
-  btn.textContent       = "Berechne...";
 
-  const brutto        = parseFloat(bruttoInput.value);
-  const steuerklasse  = parseInt(document.getElementById("steuerklasse").value);
-  const kirche        = document.getElementById("kirche").checked;
+  const brutto       = parseFloat(bruttoInput.value);
+  const kirche       = document.getElementById("kirche").checked;
 
-  // Grundvalidierung
   if (isNaN(brutto) || brutto <= 0) {
-    ergebnisDiv.innerHTML = `<p style="color:red;">❗ Bitte gültiges Bruttogehalt (> 0) eingeben.</p>`;
+    ergebnisDiv.innerHTML = `<p style="color:red;">❗ Bitte ein gültiges Brutto-Gehalt (> 0) eingeben.</p>`;
     btn.disabled    = false;
     btn.textContent = "Berechnen";
-    bruttoInput.focus();
     return;
   }
 
-  // 1) Einkommensteuer-Berechnung (Grundtarif 2025) :contentReference[oaicite:0]{index=0}
-  const zvE = brutto * 12; // Jahresbrutto (monatliches x12)
-  let einkommensteuer = 0;
+  // 1) Jahresbrutto
+  const zvE = brutto * 12;
 
-  if (zvE <= 12096) {
-    einkommensteuer = 0;
-  } else if (zvE <= 68429) {
-    // einfacher Mittelwert-Marginalsatz von 14 % für diese Zone
-    einkommensteuer = (zvE - 12096) * 0.14;
-  } else if (zvE <= 277825) {
-    // 14 % bis 68 429, dann 42 % bis zvE
-    einkommensteuer = (68429 - 12096) * 0.14
-                    + (zvE   - 68429) * 0.42;
-  } else {
-    // 14 % bis 68 429, 42 % bis 277 825, dann 45 % ab darüber
-    einkommensteuer = (68429 - 12096) * 0.14
-                    + (277825 - 68429) * 0.42
-                    + (zvE    - 277825) * 0.45;
+  // 2) Einkommensteuer (§ 32a EStG)
+  function calcESt(z) {
+    let S;
+    if (z <= 12096) {
+      S = 0;
+    } else if (z <= 17443) {
+      const y = (z - 12096) / 10000;
+      S = (932.3 * y + 1400) * y;
+    } else if (z <= 68480) {
+      const y = (z - 17443) / 10000;
+      S = (176.64 * y + 2397) * y + 1015.13;
+    } else if (z <= 277825) {
+      S = 0.42 * z - 10911.92;
+    } else {
+      S = 0.45 * z - 19246.67;
+    }
+    return S / 12;
   }
-  einkommensteuer /= 12; // zurück auf Monat
+  const einkommensteuer = calcESt(zvE);
 
-  // 2) Solidaritätszuschlag: 5,5 % der Steuer, ab Freigrenze entfällt er meist :contentReference[oaicite:1]{index=1}
+  // 3) Solidaritätszuschlag (5,5 %)
   const soli = einkommensteuer * 0.055;
 
-  // 3) Kirchensteuer (optional): 9 % der Steuer
+  // 4) Kirchensteuer (9 % auf ESt)
   const kirchensteuer = kirche ? einkommensteuer * 0.09 : 0;
 
-  // 4) Sozialversicherungen (monatliche Sätze)
-  const rentenRate     = 0.093;
-  const arbeitslosRate = 0.012;
-  const krankenRate    = 0.073 + 0.013; // Basis + Zusatz
-  const pflegeRate     = 0.01525;
+  // 5) Sozialversicherungen
+  const rentenversicherung       = brutto * 0.093;
+  const arbeitslosenversicherung = brutto * 0.012;
+  const krankenversicherung      = brutto * (0.073 + 0.013);
+  const pflegeversicherung       = brutto * 0.01525;
 
-  const rentenversicherung      = brutto * rentenRate;
-  const arbeitslosenversicherung = brutto * arbeitslosRate;
-  const krankenversicherung     = brutto * krankenRate;
-  const pflegeversicherung      = brutto * pflegeRate;
-
-  // Gesamtabzüge
+  // 6) Gesamtabzug
   const gesamtAbzug = einkommensteuer
                     + soli
                     + kirchensteuer
@@ -70,22 +64,20 @@ document.getElementById("gehaltsFormular").addEventListener("submit", async func
                     + krankenversicherung
                     + pflegeversicherung;
 
+  // 7) Netto
   const netto = brutto - gesamtAbzug;
 
-  // Ausgabe
+  // 8) Ausgabe
   ergebnisDiv.innerHTML = `
     <h2>💰 Netto-Gehalt: <strong>${netto.toFixed(2)} €</strong></h2>
     <ul>
       <li>🧾 Einkommensteuer: ${einkommensteuer.toFixed(2)} €</li>
-      <li>🪙 Solidaritätszuschlag (5,5 %): ${soli.toFixed(2)} €</li>
-      ${ kirche 
-         ? `<li>⛪ Kirchensteuer (9 %): ${kirchensteuer.toFixed(2)} €</li>`
-         : ``
-      }
-      <li>🏦 Rentenversicherung (9,3 %): ${rentenversicherung.toFixed(2)} €</li>
-      <li>📉 Arbeitslosenversicherung (1,2 %): ${arbeitslosenversicherung.toFixed(2)} €</li>
-      <li>🏥 Krankenversicherung (8,6 %): ${krankenversicherung.toFixed(2)} €</li>
-      <li>❤️ Pflegeversicherung (1,525 %): ${pflegeversicherung.toFixed(2)} €</li>
+      <li>🪙 Solidaritätszuschlag: ${soli.toFixed(2)} €</li>
+      ${kirche ? `<li>⛪ Kirchensteuer: ${kirchensteuer.toFixed(2)} €</li>` : ''}
+      <li>🏦 Rentenversicherung: ${rentenversicherung.toFixed(2)} €</li>
+      <li>📉 Arbeitslosenversicherung: ${arbeitslosenversicherung.toFixed(2)} €</li>
+      <li>🏥 Krankenversicherung: ${krankenversicherung.toFixed(2)} €</li>
+      <li>❤️ Pflegeversicherung: ${pflegeversicherung.toFixed(2)} €</li>
     </ul>
   `;
 
