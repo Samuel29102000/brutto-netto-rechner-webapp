@@ -15,10 +15,6 @@ document.getElementById("berechnenBtn").addEventListener("click", async () => {
       body: JSON.stringify({ brutto })
     });
 
-    if (!response.ok) {
-      throw new Error("Fehler bei der Berechnung.");
-    }
-
     const data = await response.json();
 
     document.getElementById("ergebnis").innerHTML = `
