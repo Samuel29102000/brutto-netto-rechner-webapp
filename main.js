@@ -22,7 +22,7 @@ document.getElementById("gehaltsFormular").addEventListener("submit", async func
   }
 
   try {
-    const response = await fetch("https://backend-2-0-9xt0.onrender.com", {
+    const response = await fetch("https://backend-2-0-lyhi.onrender.com/api/gehalt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
