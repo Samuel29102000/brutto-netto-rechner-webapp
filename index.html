@@ -1,13 +1,143 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Brutto-Netto-Rechner</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #f9fafb;
+      --text: #1f2937;
+      --card: #ffffff;
+      --border: #d1d5db;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1e293b;
+      --text: #f1f5f9;
+      --card: #334155;
+      --border: #475569;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--text);
+      font-size: 2rem;
+    }
+
+    .toggle-container {
+      text-align: center;
+      margin-top: -1rem;
+      margin-bottom: 1rem;
+    }
+
+    .toggle-container button {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.3s;
+    }
+
+    .toggle-container button:hover {
+      background-color: var(--border);
+    }
+
+    form {
+      max-width: 500px;
+      margin: 2rem auto;
+      background-color: var(--card);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="number"],
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    #ergebnis {
+      max-width: 500px;
+      margin: 1rem auto;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    canvas {
+      display: block;
+      max-width: 600px;
+      margin: 2rem auto;
+      background-color: var(--card);
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      form, #ergebnis, canvas {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>🧮 Brutto-Netto-Rechner</h1>
+
+  <div class="toggle-container">
+    <button onclick="toggleTheme()">🌙 / ☀️ Dark Mode umschalten</button>
+  </div>
 
   <form id="gehaltsFormular">
     <label for="bruttoInput">Brutto-Gehalt (monatlich in €):</label>
@@ -33,6 +163,13 @@
 
   <div id="ergebnis"></div>
   <canvas id="chartCanvas" width="400" height="200"></canvas>
+
+  <script>
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme");
+      document.documentElement.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+    }
+  </script>
 
   <script src="main.js"></script>
 </body>
